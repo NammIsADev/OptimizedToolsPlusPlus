@@ -13,6 +13,7 @@ if %errorlevel% neq 0 (
 Mode 100,43
 setlocal EnableDelayedExpansion
 
+
 REM Blank/Color Character
 for /F "tokens=1,2 delims=#" %%a in ('"prompt #$H#$E# & echo on & for %%b in (1) do rem"') do (set "DEL=%%a" & set "COL=%%b")
 REM Add ANSI escape sequences
@@ -24,6 +25,64 @@ set CURRENT_DIR=%~dp0
 REM Change to the 'bin' directory within the current directory
 cd /d %CURRENT_DIR%bin
 
+:update
+echo.
+echo                   --------------------------------------------------------------
+echo                                        Check for updates
+echo                   --------------------------------------------------------------
+echo.
+echo                                    Checking for new updates...
+echo                                           Please wait.
+echo.
+echo.
+curl -s -o "%temp%\check.txt" https://raw.githubusercontent.com/NammIsADev/OptimizedToolsPlusPlus/main-development/update/check.txt
+ping -n 10 localhost > nul
+
+:: Read the content of the downloaded file
+set "fileContent="
+for /f "usebackq tokens=* delims=" %%i in ("%temp%\check.txt") do (
+    set "fileContent=%%i"
+)
+
+:: Remove any quotation marks
+set "fileContent=!fileContent:"=!"
+
+:: Trim leading and trailing spaces
+for /f "tokens=* delims=" %%a in ("!fileContent!") do set "fileContent=%%a"
+
+set "newVersion=!fileContent!"
+
+:: Check the content and decide the action
+if "!fileContent!"=="2.9.1" (
+    echo                         Your version is !newVersion!, you are up to date.
+	ping -n 3 localhost > nul
+) else (
+    echo                           We found a new version. Newer version: !newVersion!
+	echo                                      Do you want to update?
+	:loop2
+	Batbox /h 0
+	Call Button 35 14 "Yes" 55 14 "No" # Press
+	Getinput /m %Press% /h 70
+	:: Check for the pressed button 
+	if %errorlevel%==1 (goto downloadupd)
+	if %errorlevel%==2 (goto restorepoint)
+	goto loop2
+	ping -n 5 localhost > nul
+	
+	:downloadupd
+	cls
+	echo.
+    echo                                        Downloading update...
+    :: Download and replace the batch file
+    curl -s -o "OptimizedTools++.bat" https://raw.githubusercontent.com/NammIsADev/OptimizedToolsPlusPlus/main-development/OptimizedTools%2B%2B%20first%20test%20version.bat
+    echo                                   Updated. Press Enter to continue.
+    pause > nul
+    goto restorepoint
+)
+
+
+:restorepoint
+cls
 echo.
 echo                   --------------------------------------------------------------
 echo                                          Restore Point
@@ -33,6 +92,7 @@ echo                                     Create a restore point?
 echo.
 echo.
 echo.
+goto loop
 
 :loop
 Batbox /h 0
@@ -44,7 +104,7 @@ Getinput /m %Press% /h 70
 if %errorlevel%==1 (goto startbackup)
 if %errorlevel%==2 (goto dir)
 goto loop
-  
+
 :startbackup
 cd..
 mkdir OPTPlusPlus >nul 2>&1
