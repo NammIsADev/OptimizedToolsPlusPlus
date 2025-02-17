@@ -1,6 +1,14 @@
-# OptimizedToolsPlusPlus
+<p align="center">
+# OptimizedTools++
+</p>
 
-**in development, not for release**
+<p align="center">
+![image](https://github.com/user-attachments/assets/48ea7253-b2e7-4361-8fb7-a49b6164c2a6)
+</p>
+
+<p align="center">
+**note: this product is in development, not for release**
+</p>
 
 **screenshot:**
 ![image](https://github.com/user-attachments/assets/538bb5d5-66e6-4aca-88b4-a746857af2ce)
